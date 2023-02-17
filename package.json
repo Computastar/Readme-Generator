@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Computastar/Readme-Generator/issues"
   },
-  "homepage": "https://github.com/Computastar/Readme-Generator#readme"
+  "homepage": "https://github.com/Computastar/Readme-Generator#readme",
+  "dependencies": {
+    "inquirer": "^6.5.0"
+  }
 }
