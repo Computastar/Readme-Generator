@@ -11,6 +11,10 @@ name: 'github'
 }
 ]
 
+// TODO: function to check vailid github username
+
+
+
 // TODO: Create a function to write README file
 function init()
 {

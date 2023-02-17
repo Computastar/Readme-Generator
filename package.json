@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Computastar/Readme-Generator#readme",
   "dependencies": {
+    "gh-account-exists": "^0.1.0",
     "inquirer": "^6.5.0"
   }
 }
