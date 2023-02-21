@@ -29,14 +29,18 @@
 
 To install this app follow the steps below: 
 
-  1. Git Clone [repo] - To Clone Repository 2. Npm Install - To Download Dependencies
+  1. Git Clone [repo] - To Clone Repository 
+  2. Npm Install - To Download Dependencies
 
 
 ## Usage 
 
 Follow the steps below to use this app: 
 
-  * Node Index.js * Follow The Prompts * Enter Required Info * Check Folder For README
+  * Node Index.js 
+  * Follow The Prompts 
+  * Enter Required Info 
+  * Check Folder For README
 
 
 ## Contributors 
