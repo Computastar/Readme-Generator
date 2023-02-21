@@ -1,8 +1,12 @@
+const clear = require("clear");
+const chalk = require("chalk");
+const figlet = require("figlet");
 const inquirer = require("inquirer");
 const axios = require("axios");
-const chalk = require('chalk');
-const figlet = require('figlet')
-const createMD = require('./assests/modules/createMD')
+const createMD = require('./assests/modules/createMD');
+
+var logFormatY = chalk.yellowBright;
+var logFormatR = chalk.redBright;
 var githubData = {};
 var response = {};
 var userFirstName;
@@ -16,19 +20,24 @@ const getUserProfile = async () => {
   const q1 = await inquirer.prompt([
     {
       type: "input",
-      message: "What is your github username?",
+      message: logFormatY("What is your github username?"),
       name: "github",
       loop: true,
     },
   ]);
 
-  console.log("OK let me get the details for: " + q1.github);
+  if (q1.github === "") {
+    console.log(logFormatR("We'll try that again shall we?"))
+    return getUserProfile();
+  }
+
+  console.log(logFormatY("OK let me get the details for: " + q1.github));
   
-  githubData = await axios.get(`https://api.github.com/users/${q1.github}`,{ headers: {'Authorization': 'token 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'}})
+  githubData = await axios.get(`https://api.github.com/users/${q1.github}`,{ headers: {'Authorization': 'token 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'}})
   .catch(function (error) {
     if (error.response.data.message === 'Not Found') {
-    console.log(
-      "We cant find that github profile, please try again or press ctrl + c to quit."
+    console.log(logFormatR
+      ("We cant find that github profile, please try again or press ctrl + c to quit.")
     );
     return getUserProfile();
   }
@@ -47,14 +56,14 @@ const getUserProfile = async () => {
 /* function returns email from github profile if present if not prompt for email */
 async function getEmailDetails(githubData) {
   if (githubData.data.email === null) {
-    console.log(
-      "Looks like your email address is't part of your github profile."
+    console.log(logFormatY(
+      "Looks like your email address isn't part of your github profile.")
     );
 
     const q2 = await inquirer.prompt([
       {
         type: "input",
-        message: "Please add your email:",
+        message: logFormatR("Please add your email:"),
         name: "email",
       },
     ]);
@@ -65,16 +74,31 @@ async function getEmailDetails(githubData) {
     const q2 = await inquirer.prompt([
       {
         type: "confirm",
-        message: `We found this email from your github profile, ${githubData.data.email} is it correct:`,
+        message: logFormatY(`We found this email from your github profile,` + logFormatR(`${githubData.data.email}`) + ` is it correct:`),
         name: "email",
         default: githubData.data.email,
         // validate: confirmInput
       },
     ]);
 
-    response.email = githubData.data.email;
+    if (q2)
+    {
+      response.email = githubData.data.email;
+      getProjectTitle();
+      return q2.email;
+    }
+    else{
+    const q2 = await inquirer.prompt([
+      {
+        type: "input",
+        message: logFormatR("Please add your email:"),
+        name: "email",
+      },
+    ]);
+    response.email = q2.email;
     getProjectTitle();
     return q2.email;
+  }
   }
 }
 
@@ -90,7 +114,7 @@ async function getProjectTitle() {
 
   const githubRepos = await axios.get(githubData.data.repos_url, {
     headers: {
-      Authorization: "token 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",
+      Authorization: "token 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",
     },
   });
   //console.log(githubRepos);
@@ -102,7 +126,7 @@ async function getProjectTitle() {
   const q3 = await inquirer.prompt([
     {
       type: "list",
-      message: `Ok ${userFirstName}, We found the following repos in GitHub, Select one or choose 'Enter a new project'?`,
+      message: logFormatY(`Ok ${userFirstName}, We found the following repos in GitHub, Select one or choose 'Enter a new project'?`),
       name: "title",
       choices: result,
       //validate: confirmInput
@@ -113,7 +137,7 @@ async function getProjectTitle() {
     const q3 = await inquirer.prompt([
       {
         type: "input",
-        message: `Ok ${userFirstName}, Enter a new project title'?`,
+        message: logFormatY(`Ok ${userFirstName}, Enter a new project title'?`),
         name: "title",
         //validate: confirmInput
       },
@@ -134,7 +158,7 @@ async function getProjectDescription() {
   const q4 = await inquirer.prompt([
     {
       type: "input",
-      message: `Ok ${userFirstName}, Lets add a description of the project ${response.title}?`,
+      message: logFormatY(`Ok ${userFirstName}, Lets add a description of the project ${response.title}?`),
       name: "description",
       //validate: confirmInput
     },
@@ -149,7 +173,7 @@ async function getProjectInstallation() {
   const q5 = await inquirer.prompt([
     {
       type: "input",
-      message: `Ok ${userFirstName}, Lets add installation instructions for the project ${response.title}?`,
+      message: logFormatY(`Ok ${userFirstName}, Lets add installation instructions for the project ${response.title}?`),
       name: "installation",
       //validate: confirmInput
     },
@@ -164,7 +188,7 @@ async function getProjectUsage() {
   const q6 = await inquirer.prompt([
     {
       type: "input",
-      message: `Ok ${userFirstName}, Lets add usage details for the project ${response.title}?`,
+      message: logFormatY(`Ok ${userFirstName}, Lets add usage details for the project ${response.title}?`),
       name: "usage",
       //validate: confirmInput
     },
@@ -180,7 +204,7 @@ async function getGitHubLicenses() {
 
   const githubLicenses = await axios.get(`https://api.github.com/licenses`, {
     headers: {
-      Authorization: "token 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",
+      Authorization: "token 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",
       Hidden: "false",
     },
   });
@@ -192,7 +216,7 @@ async function getGitHubLicenses() {
   const q7 = await inquirer.prompt([
     {
       type: "rawlist",
-      message: `Ok ${userFirstName}, What is the license do you want to use for the project ${response.title}?`,
+      message: logFormatY(`Ok ${userFirstName}, What is the license do you want to use for the project ${response.title}?`),
       name: "license",
       choices: result,
       //validate: confirmInput
@@ -213,7 +237,7 @@ async function getProjectContributors() {
     const q8 = await inquirer.prompt([
       {
         type: "input",
-        message: `Ok ${userFirstName}, Who has contributored to the project ${response.title}?`,
+        message: logFormatY(`Ok ${userFirstName}, Who has contributored to the project ${response.title}?`),
         name: "contributors",
         //validate: confirmInput
       },
@@ -223,13 +247,13 @@ async function getProjectContributors() {
     return response.usage;
   }
 
-  console.log(`Lets see if we can the contributors to ${response.title}`);
+  console.log(logFormatY(`Lets see if we can the contributors to ${response.title}`));
 
   const githubContributors = await axios.get(
     `https://api.github.com/repos/${response.github}/${response.title}/contributors`,
     {
       headers: {
-        Authorization: "token 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",
+        Authorization: "token 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",
       },
     }
   );
@@ -243,7 +267,7 @@ async function getProjectContributors() {
     const q8 = await inquirer.prompt([
       {
         type: "checkbox",
-        message: `Ok ${userFirstName}, We found the following contributors for ${response.title} in GitHub`,
+        message: logFormatY(`Ok ${userFirstName}, We found the following contributors for ${response.title} in GitHub`),
         name: "contributors",
         choices: result,
         //validate: confirmInput
@@ -257,7 +281,7 @@ async function getProjectContributors() {
       const q8 = await inquirer.prompt([
         {
           type: "input",
-          message: `Ok ${userFirstName}, Who has contributored to the project ${response.title}?`,
+          message: logFormatY(`Ok ${userFirstName}, Who has contributored to the project ${response.title}?`),
           name: "contributors",
           //validate: confirmInput
         },
@@ -274,7 +298,7 @@ async function getProjectTests() {
   const q9 = await inquirer.prompt([
     {
       type: "input",
-      message: `Ok ${userFirstName}, Lets add some tests of the project ${response.title}?`,
+      message: logFormatY(`Ok ${userFirstName}, Lets add some tests of the project ${response.title}?`),
       name: "tests",
       //validate: confirmInput
     },
@@ -287,6 +311,8 @@ async function getProjectTests() {
 
 // TODO: Create a function to write README file
 function init() {
+  clear();
+  console.log(chalk.magentaBright(figlet.textSync('Readme Generator', {horizontalLayout: "full"})));
   response = getUserProfile();
 }
 

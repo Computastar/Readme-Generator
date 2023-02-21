@@ -29,13 +29,16 @@ function renderLicenseSection(response) {
   if (`${response.license}` === "None") {
     return("")
 } else {return (`## License\n
-  ${response.license}\n`)
+  ${response.license}\n
+  Distributed under the ${response.license} See LICENSE.txt for more information`)
 }
 }
 
 // TODO: Create a function to generate markdown for README
 function createMD(response) {
   var markdown =  `# ${response.title}\n
+
+  ## Description
   ${capitaliseFirstLetter(response
     .description)}\n
 
@@ -50,18 +53,24 @@ function createMD(response) {
 ${renderLicenseLink(response)} \n
 
 ## Installation \n
+To install this app follow the steps below: \n
   ${capitaliseFirstLetter(response.installation)}\n
 
 ## Usage \n
+Follow the steps below to use this app: \n
   ${capitaliseFirstLetter(response.usage)}\n
 
 ## Contributors \n
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated. \n
+Current contributors are: \n
   ${response.contributors}\n
 
 ## Tests\n
+To run test type the following command/s: \n
   ${capitaliseFirstLetter(response.tests)}\n
 
 ## Questions\n
+Any question, get intouch: \n
   Github: [${response.github}](${response.html_url})\n
   Email: ${response.email}\n
   
