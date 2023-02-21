@@ -7,6 +7,8 @@ var response = {};
 var userFirstName;
 var newProject = false;
 
+import {} from "./assests/modules/config.js"
+
 
 /* function to call GitHub Api to get github profile details from inputted string */
 const getUserProfile = async () => {
@@ -23,13 +25,9 @@ const getUserProfile = async () => {
   console.log("OK let me get the details for: " + q1.github);
   //await new Promise(resolve => setTimeout(resolve, 5000));
 
-  githubData = await axios.get(`https://api.github.com/users/${q1.github}`, {
-    headers: {
-      Authorization: "token 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",
-    },
-  });
+  githubData = await axios.get(`https://api.github.com/users/${q1.github}`,{ headers: {'Authorization': 'token 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'}})
 
-  console.log(githubData.data);
+  //console.log(githubData.data);
   if (githubData.status != "200") {
     console.log(
       "We cant find that github profile, please try again or press ctrl + c to quit."
@@ -79,11 +77,6 @@ async function getEmailDetails(githubData) {
   }
 }
 
-function getUserFirstName(githubData) {
-  getUserFirstName = githubData.data.name.split(" ");
-  return getUserFirstName[0];
-}
-
 /* function calls GitHub api to get users repos, present them as list to select, or
    'Enter a new project ' to create a new project title */
 async function getProjectTitle() {
@@ -96,7 +89,7 @@ async function getProjectTitle() {
 
   const githubRepos = await axios.get(githubData.data.repos_url, {
     headers: {
-      Authorization: "token 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",
+      Authorization: "token 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",
     },
   });
   //console.log(githubRepos);
@@ -170,7 +163,7 @@ async function getProjectUsage() {
   const q6 = await inquirer.prompt([
     {
       type: "input",
-      message: `ok ${userFirstName} Lets add usage details for the project ${response.title}?`,
+      message: `Ok ${userFirstName}, Lets add usage details for the project ${response.title}?`,
       name: "usuage",
       //validate: confirmInput
     },
@@ -186,7 +179,7 @@ async function getGitHubLicenses() {
 
   const githubLicenses = await axios.get(`https://api.github.com/licenses`, {
     headers: {
-      Authorization: "token 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",
+      Authorization: "token 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",
       Hidden: "false",
     },
   });
@@ -198,7 +191,7 @@ async function getGitHubLicenses() {
   const q7 = await inquirer.prompt([
     {
       type: "rawlist",
-      message: `ok ${userFirstName} What is the license do you want to use for the project ${response.title}?`,
+      message: `Ok ${userFirstName}, What is the license do you want to use for the project ${response.title}?`,
       name: "license",
       choices: result,
       //validate: confirmInput
@@ -219,7 +212,7 @@ async function getProjectContributors() {
     const q8 = await inquirer.prompt([
       {
         type: "input",
-        message: `Ok ${userFirstName} Who has contributored to the project ${response.title}?`,
+        message: `Ok ${userFirstName}, Who has contributored to the project ${response.title}?`,
         name: "contributors",
         //validate: confirmInput
       },
@@ -235,11 +228,11 @@ async function getProjectContributors() {
     `https://api.github.com/repos/${response.github}/${response.title}/contributors`,
     {
       headers: {
-        Authorization: "token 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",
+        Authorization: "token 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",
       },
     }
   );
-  console.log(githubContributors);
+  //console.log(githubContributors);
 
   if (githubContributors.status === 200) {
     for (let element of githubContributors.data) {
@@ -263,7 +256,7 @@ async function getProjectContributors() {
       const q8 = await inquirer.prompt([
         {
           type: "input",
-          message: `Ok ${userFirstName} Who has contributored to the project ${response.title}?`,
+          message: `Ok ${userFirstName}, Who has contributored to the project ${response.title}?`,
           name: "contributors",
           //validate: confirmInput
         },
@@ -280,7 +273,7 @@ async function getProjectTests() {
   const q9 = await inquirer.prompt([
     {
       type: "input",
-      message: `ok ${userFirstName} Lets add some tests of the project ${response.title}?`,
+      message: `Ok ${userFirstName}, Lets add some tests of the project ${response.title}?`,
       name: "tests",
       //validate: confirmInput
     },
