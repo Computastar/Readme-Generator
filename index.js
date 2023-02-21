@@ -1,13 +1,14 @@
 const inquirer = require("inquirer");
-const fs = require("fs");
-const path = require("path");
 const axios = require("axios");
-var githubData; //= {};
+const chalk = require('chalk');
+const figlet = require('figlet')
+const createMD = require('./assests/modules/createMD')
+var githubData = {};
 var response = {};
 var userFirstName;
 var newProject = false;
 
-import {} from "./assests/modules/config.js"
+
 
 
 /* function to call GitHub Api to get github profile details from inputted string */
@@ -21,24 +22,24 @@ const getUserProfile = async () => {
     },
   ]);
 
-   console.log("\n");
   console.log("OK let me get the details for: " + q1.github);
-  //await new Promise(resolve => setTimeout(resolve, 5000));
-
-  githubData = await axios.get(`https://api.github.com/users/${q1.github}`,{ headers: {'Authorization': 'token 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'}})
-
-  //console.log(githubData.data);
-  if (githubData.status != "200") {
+  
+  githubData = await axios.get(`https://api.github.com/users/${q1.github}`,{ headers: {'Authorization': 'token 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'}})
+  .catch(function (error) {
+    if (error.response.data.message === 'Not Found') {
     console.log(
       "We cant find that github profile, please try again or press ctrl + c to quit."
     );
-    return false;
+    return getUserProfile();
   }
+
+})
   userFirstName = githubData.data.name.split(" ");
   userFirstName = userFirstName[0];
   response.firstName = userFirstName;
 
   response.github = githubData.data.login;
+  response.html_url = githubData.data.html_url;
   getEmailDetails(githubData);
   return githubData;
 };
@@ -64,7 +65,7 @@ async function getEmailDetails(githubData) {
     const q2 = await inquirer.prompt([
       {
         type: "confirm",
-        message: `We found this email from your github proflie, ${githubData.data.email} is it correct:`,
+        message: `We found this email from your github profile, ${githubData.data.email} is it correct:`,
         name: "email",
         default: githubData.data.email,
         // validate: confirmInput
@@ -89,7 +90,7 @@ async function getProjectTitle() {
 
   const githubRepos = await axios.get(githubData.data.repos_url, {
     headers: {
-      Authorization: "token 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",
+      Authorization: "token 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",
     },
   });
   //console.log(githubRepos);
@@ -97,7 +98,7 @@ async function getProjectTitle() {
   for (let element of githubRepos.data) {
     result.push(element.name);
   }
-  console.log(result);
+  //console.log(result);
   const q3 = await inquirer.prompt([
     {
       type: "list",
@@ -164,7 +165,7 @@ async function getProjectUsage() {
     {
       type: "input",
       message: `Ok ${userFirstName}, Lets add usage details for the project ${response.title}?`,
-      name: "usuage",
+      name: "usage",
       //validate: confirmInput
     },
   ]);
@@ -173,13 +174,13 @@ async function getProjectUsage() {
   return response.usage;
 }
 
-/* function to return GitHub Licnense type. Calls GitHub Api to return licenses options*/
+/* function to return GitHub License type. Calls GitHub Api to return licenses options*/
 async function getGitHubLicenses() {
   var result = ["None"];
 
   const githubLicenses = await axios.get(`https://api.github.com/licenses`, {
     headers: {
-      Authorization: "token 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",
+      Authorization: "token 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",
       Hidden: "false",
     },
   });
@@ -197,7 +198,7 @@ async function getGitHubLicenses() {
       //validate: confirmInput
     },
   ]);
-  response.license = q7.choices;
+  response.license = q7.license;
   getProjectContributors();
   return response.license;
 }
@@ -217,18 +218,18 @@ async function getProjectContributors() {
         //validate: confirmInput
       },
     ]);
-    response.usage = q8.usage;
+    response.contributors = q8.contributors;
     getProjectTests();
     return response.usage;
   }
 
-  console.log("Lets see if we can the contributors to ${response.title}");
+  console.log(`Lets see if we can the contributors to ${response.title}`);
 
   const githubContributors = await axios.get(
     `https://api.github.com/repos/${response.github}/${response.title}/contributors`,
     {
       headers: {
-        Authorization: "token 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",
+        Authorization: "token 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",
       },
     }
   );
@@ -238,17 +239,17 @@ async function getProjectContributors() {
     for (let element of githubContributors.data) {
       result.push(element.login);
     }
-    console.log(result);
+    //console.log(result);
     const q8 = await inquirer.prompt([
       {
         type: "checkbox",
         message: `Ok ${userFirstName}, We found the following contributors for ${response.title} in GitHub`,
-        name: "title",
+        name: "contributors",
         choices: result,
         //validate: confirmInput
       },
     ]);
-    response.contributors = q8.result;
+    response.contributors = q8.contributors;
     getProjectTests();
     return response.contributors;
   } else {
@@ -279,6 +280,8 @@ async function getProjectTests() {
     },
   ]);
   response.tests = q9.tests;
+  //console.log(response)
+  createMD(response)
   return response.tests;
 }
 
