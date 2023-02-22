@@ -1,4 +1,5 @@
 const fs = require('fs');
+const chalk = require("chalk");
 
 function capitaliseFirstLetter(stringInput)
 {
@@ -9,8 +10,11 @@ function capitaliseFirstLetter(stringInput)
 function renderLicenseBadge(response) {
   if (`${response.license}` === "None") {
     return("")
-  } else {var uriComponent = `${response.license}`.replace(/ /g, "_");
-  return (`<img src="https://img.shields.io/badge/License-${uriComponent}-blue.svg">\n`)
+  } else {;
+  // var uriComponent = `${response.license}`.replace(/"/g, "")
+  // var uriComponent = `${response.license}`.replace(/ /g, "_")
+  // console.log(uriComponent)
+  return response.badge; //(`<img src="https://img.shields.io/badge/License-${uriComponent}-blue.svg">\n`)
   }
 }
 
@@ -78,7 +82,7 @@ ${renderLicenseSection(response)}`
 
 /* write file with with Title as name*/
   fs.writeFile(`README-${response.title}.md`, markdown, (err) =>
-  err ? console.error(err) : console.log('Success!'))
+  err ? console.error(err) : console.log(chalk.greenBright(`Successfully created README-${response.title}.md`)))
  
 }
 

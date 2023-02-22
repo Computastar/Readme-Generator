@@ -3,8 +3,8 @@ const chalk = require("chalk");
 const figlet = require("figlet");
 const inquirer = require("inquirer");
 const axios = require("axios");
-const createMD = require('./assests/modules/createMD');
-const config = require('./assests/modules/config.json');
+const createMD = require('./assets/modules/createMD');
+const config = require('./assets/modules/config.json');
 
 var logFormatY = chalk.yellowBright;
 var logFormatR = chalk.redBright;
@@ -18,8 +18,6 @@ var newProject = false;
 
 /* function to call GitHub Api to get github profile details from inputted string */
 const getUserProfile = async () => {
-
-  console.log(config.token)
   const q1 = await inquirer.prompt([
     {
       type: "input",
@@ -201,28 +199,28 @@ async function getProjectUsage() {
 
 /* function to return GitHub License type. Calls GitHub Api to return licenses options*/
 async function getGitHubLicenses() {
-  var result = ["None"];
 
-  const githubLicenses = await axios.get(`https://api.github.com/licenses`, {
-    headers: {
-      Authorization: `token  ${config.token}`,
-      Hidden: "false",
-    },
-  });
-
-  for (let element of githubLicenses.data) {
-    result.push(element.name);
-  }
+  const result = []
+  const githubLicenses = await axios.get(`https://my-json-server.typicode.com/computastar/badges-api-server/db`);
+  
+  for (property of githubLicenses.data.licenses) {
+     result.push(property.name);
+   }
 
   const q7 = await inquirer.prompt([
     {
       type: "rawlist",
       message: logFormatY(`Ok ${userFirstName}, What is the license do you want to use for the project ${response.title}?`),
       name: "license",
-      choices: result,
-      //validate: confirmInput
+      choices: result
     },
   ]);
+  for (property of githubLicenses.data.licenses) {
+    if (q7.license === property.name) {
+
+      response.badge = property.badge;
+    }
+  }
   response.license = q7.license;
   getProjectContributors();
   return response.license;
