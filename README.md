@@ -75,7 +75,5 @@ Any question, get intouch:
   Distributed under the MIT License See LICENSE.txt for more information
   
 ## Video
-<video align="left" width="400" height="350" controls> 
-<src="https://drive.google.com/file/d/12v2g_dt-fZJb3XFU9TFiRvbJ7Wl19LCT/preview">
-</video>
-<iframe src="https://drive.google.com/file/d/12v2g_dt-fZJb3XFU9TFiRvbJ7Wl19LCT/preview" width="640" height="480"></iframe>
+
+Follow link to video demo: [ReadMe Generator Video](https://drive.google.com/file/d/12v2g_dt-fZJb3XFU9TFiRvbJ7Wl19LCT/preview)
