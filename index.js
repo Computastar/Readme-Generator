@@ -4,6 +4,7 @@ const figlet = require("figlet");
 const inquirer = require("inquirer");
 const axios = require("axios");
 const createMD = require('./assests/modules/createMD');
+const config = require('./assests/modules/config.json');
 
 var logFormatY = chalk.yellowBright;
 var logFormatR = chalk.redBright;
@@ -17,6 +18,8 @@ var newProject = false;
 
 /* function to call GitHub Api to get github profile details from inputted string */
 const getUserProfile = async () => {
+
+  console.log(config.token)
   const q1 = await inquirer.prompt([
     {
       type: "input",
@@ -33,7 +36,7 @@ const getUserProfile = async () => {
 
   console.log(logFormatY("OK let me get the details for: " + q1.github));
   
-  githubData = await axios.get(`https://api.github.com/users/${q1.github}`,{ headers: {'Authorization': 'token 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'}})
+  githubData = await axios.get(`https://api.github.com/users/${q1.github}`,{ headers: {'Authorization': `token  ${config.token}`}})
   .catch(function (error) {
     if (error.response.data.message === 'Not Found') {
     console.log(logFormatR
@@ -106,15 +109,13 @@ async function getEmailDetails(githubData) {
    'Enter a new project ' to create a new project title */
 async function getProjectTitle() {
  
-  console.log(response.firstName + response.github + response.email);
-
-  const result = ["Enter a new project"];
+ const result = ["Enter a new project"];
 
   //console.log(githubData.data.repos_url);
 
   const githubRepos = await axios.get(githubData.data.repos_url, {
     headers: {
-      Authorization: "token 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",
+      Authorization: `token  ${config.token}`,
     },
   });
   //console.log(githubRepos);
@@ -204,7 +205,7 @@ async function getGitHubLicenses() {
 
   const githubLicenses = await axios.get(`https://api.github.com/licenses`, {
     headers: {
-      Authorization: "token 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",
+      Authorization: `token  ${config.token}`,
       Hidden: "false",
     },
   });
@@ -253,7 +254,7 @@ async function getProjectContributors() {
     `https://api.github.com/repos/${response.github}/${response.title}/contributors`,
     {
       headers: {
-        Authorization: "token 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",
+        Authorization: `token  ${config.token}`,
       },
     }
   );
