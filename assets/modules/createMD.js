@@ -11,10 +11,7 @@ function renderLicenseBadge(response) {
   if (`${response.license}` === "None") {
     return("")
   } else {;
-  // var uriComponent = `${response.license}`.replace(/"/g, "")
-  // var uriComponent = `${response.license}`.replace(/ /g, "_")
-  // console.log(uriComponent)
-  return response.badge; //(`<img src="https://img.shields.io/badge/License-${uriComponent}-blue.svg">\n`)
+  return response.badge; 
   }
 }
 
