@@ -1,4 +1,4 @@
 node_modules/
 
 .DS_Store/
-./assests/modules/config.json
+/assests/modules/config.json
